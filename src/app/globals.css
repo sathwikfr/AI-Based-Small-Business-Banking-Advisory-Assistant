@@ -1,0 +1,323 @@
+/* ─── Google Fonts — must come before @import tailwindcss ────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+
+/* ─── Design tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --bg-app:        #0a0a0c;
+  --bg-panel:      #141416;
+  --bg-panel-alt:  #18181b;
+  --border-hair:   #26262a;
+  
+  --text-primary:  #f4f4f5;
+  --text-secondary:#a1a1aa;
+  --text-muted:    #6b6b70;
+  --text-disabled: #52525b;
+
+  --accent-healthy:   #22c55e;
+  --accent-stable:    #eab308;
+  --accent-attention: #f97316;
+  --accent-atrisk:    #ef4444;
+
+  --chart-inflow:  #22c55e;
+  --chart-outflow: #ef4444;
+  --chart-net:     #f4f4f5;
+  --chart-line:    #3b82f6;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 14px; }
+
+body {
+  background:  var(--bg-app);
+  color:       var(--text-primary);
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Monospace numerals for all financial figures */
+.font-mono, [data-numeric] {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-app); }
+::-webkit-scrollbar-thumb { background: var(--bg-panel-alt); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-hair); }
+
+/* ─── Layout ──────────────────────────────────────────────────────────────────── */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  background: var(--bg-app);
+  padding: 32px;
+}
+
+/* ─── Card ────────────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hair);
+  border-radius: 8px;
+}
+
+/* ─── Severity badges (E.7) ─────────────────────────────────────────────────── */
+.badge-severity {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-healthy {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--accent-healthy);
+}
+
+.badge-stable {
+  background: rgba(234, 179, 8, 0.15);
+  color: var(--accent-stable);
+}
+
+.badge-attention {
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--accent-attention);
+}
+
+.badge-atrisk {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accent-atrisk);
+}
+
+/* ─── Table ───────────────────────────────────────────────────────────────────── */
+.table-wrapper { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; }
+
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-hair);
+  white-space: nowrap;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-hair);
+  vertical-align: middle;
+}
+
+tbody tr {
+  transition: background 0.12s ease;
+  cursor: pointer;
+}
+
+tbody tr:hover { background: var(--bg-panel-alt); }
+
+tbody tr:last-child td { border-bottom: none; }
+
+/* ─── Buttons ─────────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--chart-line);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) { opacity: 0.9; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-hair);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-panel-alt);
+  color: var(--text-primary);
+}
+
+/* ─── Inputs ──────────────────────────────────────────────────────────────────── */
+input, textarea, select {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hair);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  padding: 8px 12px;
+  outline: none;
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--chart-line);
+}
+
+textarea { resize: vertical; min-height: 72px; }
+
+select option { background: var(--bg-panel); }
+
+/* ─── Modal ───────────────────────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal-content {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  max-width: 540px;
+  width: 100%;
+  padding: 28px;
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp  { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── Spinner ──────────────────────────────────────────────────────────────────── */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-hair);
+  border-top-color: var(--chart-line);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Skeleton loader ──────────────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-panel) 25%, var(--bg-panel-alt) 50%, var(--bg-panel) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* ─── Label-above-value pattern (E.4) ────────────────────────────────────────── */
+.label-above-value {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.label-above-value .label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.label-above-value .value {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ─── Badge / code pill ──────────────────────────────────────────────────────── */
+.code-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* ─── Toast ───────────────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border-hair);
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 13px;
+  z-index: 100;
+  animation: toastIn 0.2s ease;
+  max-width: 320px;
+}
+
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── Divider ─────────────────────────────────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border-hair);
+  margin: 20px 0;
+}
+
+/* ─── Section label ──────────────────────────────────────────────────────────── */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-disabled);
+  margin-bottom: 12px;
+}
+
+/* ─── Expand/collapse animation ─────────────────────────────────────────────── */
+.expand-content {
+  overflow: hidden;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+}

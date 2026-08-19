@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model RelationshipManager {
+  id         String     @id @default(cuid())
+  name       String
+  email      String     @unique
+  businesses Business[]
+
+  @@map("relationship_managers")
+}
+
+model Business {
+  id                String              @id @default(cuid())
+  name              String
+  businessType      String              // retail, services, manufacturing, food, trading
+  monthlyRevenueAvg Float
+  onboardedAt       DateTime
+  ownerEmail        String              @unique @default("client@example.com")
+  rmId              String
+  rm                RelationshipManager @relation(fields: [rmId], references: [id])
+  accounts          Account[]
+  transactions      Transaction[]
+  loans             Loan[]
+  signals           Signal[]
+  notes             InteractionNote[]
+  summaries         CustomerSummary[]
+  healthScores      HealthScore[]
+
+  @@index([rmId])
+  @@map("businesses")
+}
+
+model Account {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id])
+  accountType String   // current, overdraft, credit_line
+  balance     Float
+  creditLimit Float?
+
+  @@index([businessId])
+  @@map("accounts")
+}
+
+model Transaction {
+  id           String   @id @default(cuid())
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id])
+  date         DateTime
+  amount       Float
+  direction    String   // inflow, outflow
+  category     String   // receivable, payable, payroll, loan_emi, tax, rent, other
+  counterparty String?
+
+  @@index([businessId, date])
+  @@map("transactions")
+}
+
+model Loan {
+  id           String   @id @default(cuid())
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id])
+  productType  String   // working_capital, term_loan, overdraft, invoice_financing
+  principal    Float
+  outstanding  Float
+  maturityDate DateTime
+  status       String   // active, closed, overdue
+
+  @@index([businessId])
+  @@map("loans")
+}
+
+model Signal {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id])
+  type        String   // stress, opportunity
+  code        String   // RECEIVABLES_AGING, SEASONAL_DIP, etc.
+  severity    String   // low, medium, high
+  metricValue Float
+  metricLabel String   // e.g. "Days Sales Outstanding"
+  detectedAt  DateTime @default(now())
+  isActive    Boolean  @default(true)
+
+  @@index([businessId, isActive])
+  @@map("signals")
+}
+
+model HealthScore {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  score      Int      // 0-100
+  computedAt DateTime @default(now())
+  driverCode String?  // which signal most affected the score
+
+  @@index([businessId, computedAt])
+  @@map("health_scores")
+}
+
+model CustomerSummary {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id])
+  content     String
+  signalIds   String   // JSON array — audit trail of which signals drove this summary
+  generatedAt DateTime @default(now())
+
+  @@map("customer_summaries")
+}
+
+model InteractionNote {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  date       DateTime
+  note       String
+  channel    String   // call, visit, email
+
+  @@map("interaction_notes")
+}
+
+model PolicyReference {
+  id          String @id @default(cuid())
+  productType String // working_capital, invoice_financing, overdraft, term_loan
+  title       String
+  summary     String // short grounding text for LLM, not full legal doc
+  eligibility String
+
+  @@map("policy_references")
+}
